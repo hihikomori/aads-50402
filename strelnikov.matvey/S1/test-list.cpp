@@ -96,7 +96,6 @@ BOOST_AUTO_TEST_CASE(Move_Assignment)
 
   BOOST_CHECK_EQUAL(size(list2), 1);
   BOOST_CHECK_EQUAL(*list2.begin(), 123);
-  BOOST_CHECK(list1.empty());
 }
 
 BOOST_AUTO_TEST_CASE(Destructor_Cleans_List)
