@@ -108,7 +108,6 @@ namespace strelnikov
     }
 
     swap(other);
-    other.clear();
     return *this;
   }
 
@@ -169,7 +168,7 @@ namespace strelnikov
   template< class T >
   typename List< T >::iterator List< T >::insert_after(const_iterator pos, const T &value)
   {
-    node *curr = const_cast< node * >(pos.curr_);
+    node *curr = pos.curr_;
     node *new_node = new node();
     new_node->val = value;
 
@@ -182,7 +181,7 @@ namespace strelnikov
   template< class T >
   typename List< T >::iterator List< T >::insert_after(const_iterator pos, T &&value)
   {
-    node *curr = const_cast< node * >(pos.curr_);
+    node *curr = pos.curr_;
     node *new_node = new node();
     new_node->val = std::move(value);
 
@@ -205,7 +204,7 @@ namespace strelnikov
   template< class T >
   typename List< T >::iterator List< T >::erase_after(const_iterator pos)
   {
-    node *curr = const_cast< node * >(pos.curr_);
+    node *curr = pos.curr_;
     node *to_delete = curr->next;
 
     if (!to_delete) {

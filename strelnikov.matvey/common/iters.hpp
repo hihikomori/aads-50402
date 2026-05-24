@@ -45,7 +45,7 @@ namespace strelnikov
   class LCIter
   {
   public:
-    using node = const Node< T >;
+    using node = Node< T >;
 
     LCIter() noexcept;
     LCIter(const LCIter &) noexcept;
@@ -69,7 +69,7 @@ namespace strelnikov
     bool operator!=(const LCIter &) const noexcept;
 
   private:
-    const Node< T > *curr_;
+    Node< T > *curr_;
     friend class List< T >;
     friend class LIter< T >;
   };
