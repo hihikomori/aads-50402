@@ -9,7 +9,7 @@
 namespace strelnikov
 {
   List< std::pair< std::string, List< size_t > > > input(std::istream &in);
-  template < class T >
+  template< class T >
   size_t size(const List< T > &list)
   {
     size_t res = 0;

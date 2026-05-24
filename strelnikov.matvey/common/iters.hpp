@@ -5,11 +5,11 @@
 
 namespace strelnikov
 {
-  template < class T >
+  template< class T >
   class List;
-  template < class T >
+  template< class T >
   class LCIter;
-  template < class T >
+  template< class T >
   class LIter
   {
   public:
@@ -41,7 +41,7 @@ namespace strelnikov
     friend class LCIter< T >;
   };
 
-  template < class T >
+  template< class T >
   class LCIter
   {
   public:
@@ -74,31 +74,31 @@ namespace strelnikov
     friend class LIter< T >;
   };
 
-  template < class T >
+  template< class T >
   LIter< T >::LIter() noexcept:
     curr_(nullptr)
   {}
 
-  template < class T >
+  template< class T >
   LIter< T >::LIter(const LIter &other) noexcept:
     curr_(other.curr_)
   {}
 
-  template < class T >
+  template< class T >
   LIter< T >::LIter(LIter &&other) noexcept:
     curr_(other.curr_)
   {
     other.curr_ = nullptr;
   }
 
-  template < class T >
+  template< class T >
   LIter< T > &LIter< T >::operator=(const LIter &other) noexcept
   {
     curr_ = other.curr_;
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LIter< T > &LIter< T >::operator=(LIter &&other) noexcept
   {
     if (this == &other) {
@@ -111,24 +111,24 @@ namespace strelnikov
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LIter< T >::LIter(node *n) noexcept:
     curr_(n)
   {}
 
-  template < class T >
+  template< class T >
   T &LIter< T >::operator*() noexcept
   {
     return curr_->val;
   }
 
-  template < class T >
+  template< class T >
   T *LIter< T >::operator->() noexcept
   {
     return &(curr_->val);
   }
 
-  template < class T >
+  template< class T >
   LIter< T > &LIter< T >::operator++()
   {
     if (curr_) {
@@ -137,7 +137,7 @@ namespace strelnikov
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LIter< T > LIter< T >::operator++(int)
   {
     LIter tmp = *this;
@@ -149,43 +149,43 @@ namespace strelnikov
     return tmp;
   }
 
-  template < class T >
+  template< class T >
   bool LIter< T >::operator==(const LIter &other) const noexcept
   {
     return curr_ == other.curr_;
   }
 
-  template < class T >
+  template< class T >
   bool LIter< T >::operator!=(const LIter &other) const noexcept
   {
     return !(*this == other);
   }
 
-  template < class T >
+  template< class T >
   LCIter< T >::LCIter() noexcept:
     curr_(nullptr)
   {}
 
-  template < class T >
+  template< class T >
   LCIter< T >::LCIter(const LCIter &other) noexcept:
     curr_(other.curr_)
   {}
 
-  template < class T >
+  template< class T >
   LCIter< T >::LCIter(LCIter &&other) noexcept:
     curr_(other.curr_)
   {
     other.curr_ = nullptr;
   }
 
-  template < class T >
+  template< class T >
   LCIter< T > &LCIter< T >::operator=(const LCIter &other) noexcept
   {
     curr_ = other.curr_;
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LCIter< T > &LCIter< T >::operator=(LCIter &&other) noexcept
   {
     if (this == &other) {
@@ -198,29 +198,29 @@ namespace strelnikov
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LCIter< T >::LCIter(const LIter< T > &other) noexcept:
     curr_(other.curr_)
   {}
 
-  template < class T >
+  template< class T >
   LCIter< T >::LCIter(node *n) noexcept:
     curr_(n)
   {}
 
-  template < class T >
+  template< class T >
   const T &LCIter< T >::operator*() const noexcept
   {
     return curr_->val;
   }
 
-  template < class T >
+  template< class T >
   const T *LCIter< T >::operator->() const noexcept
   {
     return &(curr_->val);
   }
 
-  template < class T >
+  template< class T >
   LCIter< T > &LCIter< T >::operator++()
   {
     if (curr_) {
@@ -229,7 +229,7 @@ namespace strelnikov
     return *this;
   }
 
-  template < class T >
+  template< class T >
   LCIter< T > LCIter< T >::operator++(int)
   {
     LCIter tmp = *this;
@@ -241,13 +241,13 @@ namespace strelnikov
     return tmp;
   }
 
-  template < class T >
+  template< class T >
   bool LCIter< T >::operator==(const LCIter &other) const noexcept
   {
     return curr_ == other.curr_;
   }
 
-  template < class T >
+  template< class T >
   bool LCIter< T >::operator!=(const LCIter &other) const noexcept
   {
     return !(*this == other);
