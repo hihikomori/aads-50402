@@ -1,7 +1,8 @@
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
-#include "../common/stackAndQueue.hpp"
+#include "../common/queue.hpp"
+#include "../common/stack.hpp"
 #include "funcs.hpp"
 
 int main(int argc, char *argv[])

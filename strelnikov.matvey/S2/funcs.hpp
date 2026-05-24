@@ -1,13 +1,13 @@
 #include <iostream>
 #include <limits>
 #include <string>
-#include "../common/stackAndQueue.hpp"
+#include "../common/queue.hpp"
+#include "../common/stack.hpp"
 
 namespace strelnikov
 {
-  extern long long maxll;
-  extern long long minll;
-  int getPriority(const std::string &);
+  extern const long long maxll;
+  extern const long long minll;
   bool checkPriority(const std::string &, const std::string &);
   Queue< std::string > convertToPostfix(Queue< std::string >);
   Queue< Queue< std::string > > input(std::istream &);
@@ -16,5 +16,4 @@ namespace strelnikov
   long long notFunc(long long);
   bool isOp(const std::string &);
   void print(Queue< long long > &);
-  bool isNumber(const std::string &);
 }

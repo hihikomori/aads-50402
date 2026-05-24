@@ -4,24 +4,28 @@
 #include <stdexcept>
 #include <string>
 #include "funcs.hpp"
-#include "../common/stackAndQueue.hpp"
+#include "../common/queue.hpp"
+#include "../common/stack.hpp"
 
-long long strelnikov::maxll = std::numeric_limits<long long >::max();
-long long strelnikov::minll = std::numeric_limits<long long >::min();
+const long long strelnikov::maxll = std::numeric_limits< long long >::max();
+const long long strelnikov::minll = std::numeric_limits< long long >::min();
 
-int strelnikov::getPriority(const std::string &a)
+namespace
 {
-  if (a == "+" || a == "-") {
-    return 1;
-  }
-  if (a == "/" || a == "*" || a == "%") {
-    return 2;
-  }
-  if (a == "!") {
-    return 3;
-  }
+  int getPriority(const std::string &a)
+  {
+    if (a == "+" || a == "-") {
+      return 1;
+    }
+    if (a == "/" || a == "*" || a == "%") {
+      return 2;
+    }
+    if (a == "!") {
+      return 3;
+    }
 
-  return 0;
+    return 0;
+  }
 }
 
 bool strelnikov::checkPriority(const std::string &a, const std::string &b)
@@ -32,27 +36,6 @@ bool strelnikov::checkPriority(const std::string &a, const std::string &b)
 bool strelnikov::isOp(const std::string &a)
 {
   return a == "+" || a == "-" || a == "*" || a == "%" || a == "/" || a == "!";
-}
-
-bool strelnikov::isNumber(const std::string &token)
-{
-  if (token.empty()) {
-    return false;
-  }
-  size_t pos = 0;
-  if (token[0] == '-') {
-    if (token.length() == 1) {
-      return false;
-    }
-    pos = 1;
-  }
-
-  for (size_t i = pos; i < token.length(); ++i) {
-    if (!std::isdigit(static_cast< unsigned char >(token[i]))) {
-      return false;
-    }
-  }
-  return true;
 }
 
 long long strelnikov::calcOps(const std::string &op, long long a, long long b)
@@ -144,9 +127,21 @@ long long strelnikov::calc(Queue< std::string > expr)
     std::string token = expr.get();
     expr.pop();
 
-    if (isNumber(token)) {
-      long long num = std::stoll(token);
-      stack.push(num);
+    bool is_num = false;
+    long long num_val = 0;
+
+    try {
+      size_t pos = 0;
+      num_val = std::stoll(token, &pos);
+      if(pos == token.length()) {
+        is_num = true;
+      }
+    } catch (const std::exception &) {
+      is_num = false;
+    }
+
+    if (is_num) {
+      stack.push(num_val);
     } else if (isOp(token)) {
       if (stack.empty()) {
         throw std::runtime_error("Invalid expression: not enough operands");
