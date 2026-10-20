@@ -110,6 +110,8 @@ namespace strelnikov
     std::unordered_map< std::string, std::shared_ptr< File > > files_;
     std::unordered_map< std::string, std::shared_ptr< Tag > > tags_;
   };
+
+  std::string normalizePath(const std::string &);
 }
 
 #endif
