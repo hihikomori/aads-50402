@@ -26,7 +26,7 @@ namespace strelnikov
     return "";
   }
 
-  static std::string normalizePath(const std::string &path)
+  std::string normalizePath(const std::string &path)
   {
     std::string absPath = path;
     if (absPath.empty()) {
@@ -317,6 +317,11 @@ namespace strelnikov
     if (fileIt == files_.end()) {
       throw std::invalid_argument("file doesnt exist");
     }
+
+    if (collIt->second->hasFile(normPath)) {
+      throw std::invalid_argument("file already exist in collection");
+    }
+
     collIt->second->addFile(normPath);
   }
 
