@@ -26,7 +26,8 @@ namespace strelnikov
 
     static std::unique_ptr< Action > create(const std::string &, const std::vector< std::string > &);
 
-    template < typename T > static void registerCommand(const std::string &name)
+    template< typename T >
+    static void registerCommand(const std::string &name)
     {
       getRegistry()[name] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
         return std::unique_ptr< T >(new T(args));
@@ -150,13 +151,24 @@ namespace strelnikov
   class GiveTagAction: public Action
   {
     std::string tagName_;
-    std::string collectionName_;
-    std::string identifier_;
-    bool isFileTarget_;
+    std::string targetName_;
     std::string resolvedPath_;
 
   public:
     explicit GiveTagAction(const std::vector< std::string > &);
+    void execute(strelnikov::FileSystem &) override;
+    void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
+  };
+
+  class WithdrawTagAction: public Action
+  {
+    std::string tagName_;
+    std::string targetName_;
+    std::string resolvedPath_;
+
+  public:
+    explicit WithdrawTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
     std::string getCommandName() const override;

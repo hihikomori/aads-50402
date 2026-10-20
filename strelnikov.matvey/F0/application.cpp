@@ -116,20 +116,20 @@ namespace strelnikov
   void Application::processCommand(const Command &cmd, const std::string &rawInput)
   {
     try {
-        auto it = serviceCommands_.find(cmd.name);
+      auto it = serviceCommands_.find(cmd.name);
 
-        if (it != serviceCommands_.end()) {
-            it->second(this, cmd.args.empty() ? "" : cmd.args[0]);
-        } else {
-            undoManager_.clearRedo();
+      if (it != serviceCommands_.end()) {
+        it->second(this, cmd.args.empty() ? "" : cmd.args[0]);
+      } else {
+        undoManager_.clearRedo();
 
-            auto action = Action::create(cmd.name, cmd.args);
-            action->execute(fs_);
-            undoManager_.push(std::move(action));
-            commandHistory_.push_back(rawInput);
-        }
+        auto action = Action::create(cmd.name, cmd.args);
+        action->execute(fs_);
+        undoManager_.push(std::move(action));
+        commandHistory_.push_back(rawInput);
+      }
     } catch (const std::exception &e) {
-        std::cout << "[ERR] INVALID COMMAND: " << e.what() << "\n";
+      std::cout << "[ERR] INVALID COMMAND: " << e.what() << "\n";
     }
   }
 

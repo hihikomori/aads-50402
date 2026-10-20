@@ -346,95 +346,37 @@ namespace strelnikov
     return "rm-tag " + tagName_;
   }
 
-  static std::string resolveFileInCollection(const std::shared_ptr< Collection > &coll, const std::string &identifier,
-                                             bool &ambiguous)
-  {
-    ambiguous = false;
-    if (coll->hasFile(identifier)) {
-      return identifier;
-    }
-    std::vector< std::string > matches;
-    for (const auto &f : coll->getFiles()) {
-      if (getFilename(f) == identifier) {
-        matches.push_back(f);
-      }
-    }
-    if (matches.size() > 1) {
-      ambiguous = true;
-      return "";
-    }
-    if (matches.size() == 1) {
-      return matches[0];
-    }
-    return "";
-  }
-
-  GiveTagAction::GiveTagAction(const std::vector< std::string > &args)
-  {
-    if (args.size() == 2) {
-
-      tagName_ = args[0];
-      collectionName_ = args[1];
-      isFileTarget_ = false;
-    } else if (args.size() == 3) {
-
-      tagName_ = args[0];
-      collectionName_ = args[1];
-      identifier_ = args[2];
-      isFileTarget_ = true;
-    } else {
-      throw std::invalid_argument("invalid arguments");
-    }
-  }
-
+  GiveTagAction::GiveTagAction(const std::vector< std::string > &args):
+    tagName_(args[0]),
+    targetName_(args[1])
+  {}
   void GiveTagAction::execute(FileSystem &fs)
   {
-
     if (!fs.getTags().count(tagName_)) {
       throw std::invalid_argument("tag \"" + tagName_ + "\" does not exist");
     }
 
-    if (isFileTarget_) {
-
-      auto collIt = fs.getCollections().find(collectionName_);
-      if (collIt == fs.getCollections().end()) {
-        throw std::invalid_argument("collection \"" + collectionName_ + "\" does not exist");
-      }
-      bool ambiguous = false;
-      resolvedPath_ = resolveFileInCollection(collIt->second, identifier_, ambiguous);
-      if (ambiguous) {
-        std::cout << "[ERR] AMBIGUOUS IDENTIFIER" << '\n';
-        return;
-      }
-      if (resolvedPath_.empty()) {
-        throw std::invalid_argument("file \"" + identifier_ + "\" does not exist in collection \"" + collectionName_
-                                    + "\"");
-      }
-      fs.giveTagToFile(resolvedPath_, tagName_);
-      std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << resolvedPath_ << "\" file from \""
-                << collectionName_ << "\" collection" << '\n';
+    if (fs.getCollections().count(targetName_)) {
+      fs.giveTagToCollection(targetName_, tagName_);
+      std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << targetName_ << "\" collection" << '\n';
       return;
     }
 
-    if (fs.getCollections().count(collectionName_)) {
-      fs.giveTagToCollection(collectionName_, tagName_);
-      std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << collectionName_ << "\" collection" << '\n';
-      return;
-    }
-
-    std::string normPath = normalizePath(collectionName_);
+    std::string normPath = normalizePath(targetName_);
     std::vector< std::string > matches;
+
     if (fs.getFiles().count(normPath)) {
       matches.push_back(normPath);
     } else {
       for (const auto &pair : fs.getFiles()) {
-        if (getFilename(pair.first) == collectionName_) {
+        if (getFilename(pair.first) == targetName_) {
           matches.push_back(pair.first);
         }
       }
     }
+
     if (matches.empty()) {
-      throw std::invalid_argument("collection or file \"" + collectionName_ + "\" does not exist");
+      throw std::invalid_argument("collection or file \"" + targetName_ + "\" does not exist");
     }
     if (matches.size() > 1) {
       std::cout << "[ERR] AMBIGUOUS IDENTIFIER" << '\n';
@@ -445,25 +387,88 @@ namespace strelnikov
     fs.giveTagToFile(resolvedPath_, tagName_);
     std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << resolvedPath_ << "\" file" << '\n';
   }
-
   void GiveTagAction::undo(FileSystem &fs)
   {
-
     if (!resolvedPath_.empty()) {
       try {
-        fs.removeTagFromFile(resolvedPath_, tagName_);
+        fs.withdrawTagFromFile(resolvedPath_, tagName_);
+        std::cout << "[OK] tag \"" << tagName_ << "\" was withdrawned to \"" << targetName_ << "\" file" << '\n';
       } catch (...) {
       }
-    } else if (!isFileTarget_ && fs.getCollections().count(collectionName_)) {
+    } else {
       try {
-        fs.removeTagFromCollection(collectionName_, tagName_);
+        fs.withdrawTagFromCollection(targetName_, tagName_);
+        std::cout << "[OK] tag \"" << tagName_ << "\" was withdrawned to \"" << targetName_ << "\" collection" << '\n';
       } catch (...) {
       }
     }
   }
   std::string GiveTagAction::getCommandName() const
   {
-    return "give-tag " + tagName_ + " " + collectionName_ + " " + identifier_;
+    return "give-tag " + tagName_ + " " + targetName_;
+  }
+
+  WithdrawTagAction::WithdrawTagAction(const std::vector< std::string > &args):
+    tagName_(args[0]),
+    targetName_(args[1])
+  {}
+  void WithdrawTagAction::execute(FileSystem &fs)
+  {
+    if (!fs.getTags().count(tagName_)) {
+      throw std::invalid_argument("tag \"" + tagName_ + "\" does not exist");
+    }
+
+    if (fs.getCollections().count(targetName_)) {
+      fs.withdrawTagFromCollection(targetName_, tagName_);
+      std::cout << "[OK] tag \"" << tagName_ << "\" was withdrawned to \"" << targetName_ << "\" collection" << '\n';
+      return;
+    }
+
+    std::string normPath = normalizePath(targetName_);
+    std::vector< std::string > matches;
+
+    if (fs.getFiles().count(normPath)) {
+      matches.push_back(normPath);
+    } else {
+      for (const auto &pair : fs.getFiles()) {
+        if (getFilename(pair.first) == targetName_) {
+          matches.push_back(pair.first);
+        }
+      }
+    }
+
+    if (matches.empty()) {
+      throw std::invalid_argument("collection or file \"" + targetName_ + "\" does not exist");
+    }
+    if (matches.size() > 1) {
+      std::cout << "[ERR] AMBIGUOUS IDENTIFIER" << '\n';
+      return;
+    }
+
+    resolvedPath_ = matches[0];
+    fs.giveTagToFile(resolvedPath_, tagName_);
+    std::cout << "[OK] tag \"" << tagName_ << "\" was withdrawned to \"" << resolvedPath_ << "\" file" << '\n';
+  }
+
+  void WithdrawTagAction::undo(FileSystem &fs)
+  {
+    if (!resolvedPath_.empty()) {
+      try {
+        fs.giveTagToFile(resolvedPath_, tagName_);
+        std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << targetName_ << "\" file" << '\n';
+      } catch (...) {
+      }
+    } else {
+      try {
+        fs.giveTagToCollection(targetName_, tagName_);
+        std::cout << "[OK] tag \"" << tagName_ << "\" was assigned to \"" << targetName_ << "\" collection" << '\n';
+      } catch (...) {
+      }
+    }
+  }
+  std::string WithdrawTagAction::getCommandName() const
+  {
+    return "withdraw-tag " + tagName_ + " " + targetName_;
   }
 
   FindFileByNameAction::FindFileByNameAction(const std::vector< std::string > &args)
@@ -831,6 +836,9 @@ namespace strelnikov
     };
     reg["give-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
       return std::unique_ptr< GiveTagAction >(new GiveTagAction(args));
+    };
+    reg["withdraw-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
+      return std::unique_ptr< WithdrawTagAction >(new WithdrawTagAction(args));
     };
     reg["find-file-by-name"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
       return std::unique_ptr< FindFileByNameAction >(new FindFileByNameAction(args));

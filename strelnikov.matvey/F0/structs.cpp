@@ -114,7 +114,6 @@ namespace strelnikov
     return result;
   }
 
-
   Tag::Tag(const std::string &name):
     name_(name)
   {}
@@ -137,7 +136,7 @@ namespace strelnikov
     tags_.push_back(tagName);
   }
 
-  void File::removeTag(const std::string &tagName)
+  void File::withdrawTag(const std::string &tagName)
   {
     auto it = std::find(tags_.begin(), tags_.end(), tagName);
     if (it == tags_.end()) {
@@ -220,7 +219,7 @@ namespace strelnikov
     tags_.push_back(tagName);
   }
 
-  void Collection::removeTag(const std::string &tagName)
+  void Collection::withdrawTag(const std::string &tagName)
   {
     auto it = std::find(tags_.begin(), tags_.end(), tagName);
     if (it == tags_.end()) {
@@ -352,12 +351,12 @@ namespace strelnikov
     }
     for (auto fit = files_.begin(); fit != files_.end(); ++fit) {
       if (fit->second->hasTag(name)) {
-        fit->second->removeTag(name);
+        fit->second->withdrawTag(name);
       }
     }
     for (auto cit = collections_.begin(); cit != collections_.end(); ++cit) {
       if (cit->second->hasTag(name)) {
-        cit->second->removeTag(name);
+        cit->second->withdrawTag(name);
       }
     }
     tags_.erase(it);
@@ -376,7 +375,7 @@ namespace strelnikov
     fileIt->second->addTag(tagName);
   }
 
-  void FileSystem::removeTagFromFile(const std::string &path, const std::string &tagName)
+  void FileSystem::withdrawTagFromFile(const std::string &path, const std::string &tagName)
   {
     if (!tags_.count(tagName)) {
       throw std::invalid_argument("tag doesnt exist");
@@ -386,7 +385,7 @@ namespace strelnikov
     if (fileIt == files_.end()) {
       throw std::invalid_argument("file doesnt exist");
     }
-    fileIt->second->removeTag(tagName);
+    fileIt->second->withdrawTag(tagName);
   }
 
   void FileSystem::giveTagToCollection(const std::string &collectionName, const std::string &tagName)
@@ -401,7 +400,7 @@ namespace strelnikov
     collIt->second->addTag(tagName);
   }
 
-  void FileSystem::removeTagFromCollection(const std::string &collectionName, const std::string &tagName)
+  void FileSystem::withdrawTagFromCollection(const std::string &collectionName, const std::string &tagName)
   {
     if (!tags_.count(tagName)) {
       throw std::invalid_argument("tag doesnt exist");
@@ -410,7 +409,7 @@ namespace strelnikov
     if (collIt == collections_.end()) {
       throw std::invalid_argument("collection doesnt exist");
     }
-    collIt->second->removeTag(tagName);
+    collIt->second->withdrawTag(tagName);
   }
 
   void FileSystem::validateFilesInCollections()

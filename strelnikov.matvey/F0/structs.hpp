@@ -26,7 +26,7 @@ namespace strelnikov
     explicit File(const std::string &);
 
     void addTag(const std::string &);
-    void removeTag(const std::string &);
+    void withdrawTag(const std::string &);
     bool hasTag(const std::string &) const;
 
     const std::string &getPath() const;
@@ -51,7 +51,7 @@ namespace strelnikov
     bool hasFile(const std::string &) const;
 
     void addTag(const std::string &);
-    void removeTag(const std::string &);
+    void withdrawTag(const std::string &);
     bool hasTag(const std::string &) const;
 
     bool empty();
@@ -84,10 +84,10 @@ namespace strelnikov
     void removeTag(const std::string &);
 
     void giveTagToFile(const std::string &, const std::string &);
-    void removeTagFromFile(const std::string &, const std::string &);
+    void withdrawTagFromFile(const std::string &, const std::string &);
 
     void giveTagToCollection(const std::string &, const std::string &);
-    void removeTagFromCollection(const std::string &, const std::string &);
+    void withdrawTagFromCollection(const std::string &, const std::string &);
 
     void validateFilesInCollections();
 

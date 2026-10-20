@@ -1,7 +1,7 @@
 #include "cli.hpp"
 #include <sstream>
-#include <utility>
 #include <unordered_map>
+#include <utility>
 
 namespace strelnikov
 {
@@ -16,6 +16,7 @@ namespace strelnikov
         {"make-tag", {1, 1}},
         {"rm-tag", {1, 1}},
         {"give-tag", {2, 2}},
+        {"withdraw-tag", {2, 2}},
         {"show", {1, 1}},
         {"sort", {2, 2}},
         {"check-files", {1, 2}},
@@ -39,7 +40,7 @@ namespace strelnikov
         {"history", {0, 0}},
         {"save", {1, 1}},
         {"load", {1, 1}},
-      };
+    };
 
     auto it = argRules.find(cmdName);
     if (it == argRules.end()) {
