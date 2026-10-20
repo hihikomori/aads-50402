@@ -34,15 +34,9 @@ namespace strelnikov
     return path.substr(pos + 1);
   }
 
-  bool startsWith(const std::string &str, const std::string &prefix)
+  static bool startsWith(const std::string &str, const std::string &prefix)
   {
     return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
-  }
-
-  template< typename T, typename... Args >
-  std::unique_ptr< T > make_unique(Args &&...args)
-  {
-    return std::unique_ptr< T >(new T(std::forward< Args >(args)...));
   }
 
   MakeCollectionAction::MakeCollectionAction(const std::vector< std::string > &args)
@@ -79,7 +73,7 @@ namespace strelnikov
     std::cout << "[OK] COLLECTION \"" << name_ << "\" CREATED\n";
   }
 
-  ListCollectionsAction::ListCollectionsAction(const std::vector< std::string > &args)
+  ListCollectionsAction::ListCollectionsAction(const std::vector< std::string > &)
   {}
   void ListCollectionsAction::execute(FileSystem &fs)
   {
@@ -99,7 +93,7 @@ namespace strelnikov
       std::cout << "\"\n";
     }
   }
-  void ListCollectionsAction::undo(FileSystem &fs)
+  void ListCollectionsAction::undo(FileSystem &)
   {}
 
   AddFileAction::AddFileAction(const std::vector< std::string > &args)
@@ -201,7 +195,7 @@ namespace strelnikov
       std::cout << "[OK] " << fname << " TAGS=\"" << tagsStr << "\"\n";
     }
   }
-  void ShowAction::undo(FileSystem &fs)
+  void ShowAction::undo(FileSystem &)
   {}
 
   SortAction::SortAction(const std::vector< std::string > &args)
@@ -229,7 +223,7 @@ namespace strelnikov
       coll->addFile(f);
     std::cout << "[OK] COLLECTION \"" << collectionName_ << "\" WAS SORTED\n";
   }
-  void SortAction::undo(FileSystem &fs)
+  void SortAction::undo(FileSystem &)
   {}
 
   CheckFilesAction::CheckFilesAction(const std::vector< std::string > &args)
@@ -275,7 +269,7 @@ namespace strelnikov
       }
     }
   }
-  void CheckFilesAction::undo(FileSystem &fs)
+  void CheckFilesAction::undo(FileSystem &)
   {}
 
   MakeTagAction::MakeTagAction(const std::vector< std::string > &args)
@@ -452,7 +446,7 @@ namespace strelnikov
     if (!found)
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindFileByNameAction::undo(FileSystem &fs)
+  void FindFileByNameAction::undo(FileSystem &)
   {}
 
   FindFileByPrefixAction::FindFileByPrefixAction(const std::vector< std::string > &args)
@@ -479,7 +473,7 @@ namespace strelnikov
     if (!found)
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindFileByPrefixAction::undo(FileSystem &fs)
+  void FindFileByPrefixAction::undo(FileSystem &)
   {}
 
   FindFileByTagAction::FindFileByTagAction(const std::vector< std::string > &args)
@@ -509,7 +503,7 @@ namespace strelnikov
     if (!found)
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindFileByTagAction::undo(FileSystem &fs)
+  void FindFileByTagAction::undo(FileSystem &)
   {}
 
   FindTagByNameAction::FindTagByNameAction(const std::vector< std::string > &args)
@@ -537,7 +531,7 @@ namespace strelnikov
     } else
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindTagByNameAction::undo(FileSystem &fs)
+  void FindTagByNameAction::undo(FileSystem &)
   {}
 
   FindTagByPrefixAction::FindTagByPrefixAction(const std::vector< std::string > &args)
@@ -571,7 +565,7 @@ namespace strelnikov
     if (!found)
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindTagByPrefixAction::undo(FileSystem &fs)
+  void FindTagByPrefixAction::undo(FileSystem &)
   {}
 
   FindCollectionByNameAction::FindCollectionByNameAction(const std::vector< std::string > &args)
@@ -594,7 +588,7 @@ namespace strelnikov
     } else
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindCollectionByNameAction::undo(FileSystem &fs)
+  void FindCollectionByNameAction::undo(FileSystem &)
   {}
 
   FindCollectionByPrefixAction::FindCollectionByPrefixAction(const std::vector< std::string > &args)
@@ -622,7 +616,7 @@ namespace strelnikov
     if (!found)
       std::cout << "[OK] NOT FOUND\n";
   }
-  void FindCollectionByPrefixAction::undo(FileSystem &fs)
+  void FindCollectionByPrefixAction::undo(FileSystem &)
   {}
 
   UnionCollectionsAction::UnionCollectionsAction(const std::vector< std::string > &args)
@@ -722,67 +716,67 @@ namespace strelnikov
   {
     auto &reg = Action::getRegistry();
     reg["make-collection"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< MakeCollectionAction >(args);
+      return std::unique_ptr< MakeCollectionAction >(new MakeCollectionAction(args));
     };
     reg["rm-collection"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< RmCollectionAction >(args);
+      return std::unique_ptr< RmCollectionAction >(new RmCollectionAction(args));
     };
     reg["list-collections"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< ListCollectionsAction >(args);
+      return std::unique_ptr< ListCollectionsAction >(new ListCollectionsAction(args));
     };
     reg["add-file"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< AddFileAction >(args);
+      return std::unique_ptr< AddFileAction >(new AddFileAction(args));
     };
     reg["rm-file"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< RmFileAction >(args);
+      return std::unique_ptr< RmFileAction >(new RmFileAction(args));
     };
     reg["show"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< ShowAction >(args);
+      return std::unique_ptr< ShowAction >(new ShowAction(args));
     };
     reg["sort"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< SortAction >(args);
+      return std::unique_ptr< SortAction >(new SortAction(args));
     };
     reg["check-files"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< CheckFilesAction >(args);
+      return std::unique_ptr< CheckFilesAction >(new CheckFilesAction(args));
     };
     reg["make-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< MakeTagAction >(args);
+      return std::unique_ptr< MakeTagAction >(new MakeTagAction(args));
     };
     reg["rm-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< RmTagAction >(args);
+      return std::unique_ptr< RmTagAction >(new RmTagAction(args));
     };
     reg["give-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< GiveTagAction >(args);
+      return std::unique_ptr< GiveTagAction >(new GiveTagAction(args));
     };
     reg["find-file-by-name"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindFileByNameAction >(args);
+      return std::unique_ptr< FindFileByNameAction >(new FindFileByNameAction(args));
     };
     reg["find-file-by-prefix"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindFileByPrefixAction >(args);
+      return std::unique_ptr< FindFileByPrefixAction >(new FindFileByPrefixAction(args));
     };
     reg["find-file-by-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindFileByTagAction >(args);
+      return std::unique_ptr< FindFileByTagAction >(new FindFileByTagAction(args));
     };
     reg["find-tag-by-name"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindTagByNameAction >(args);
+      return std::unique_ptr< FindTagByNameAction >(new FindTagByNameAction(args));
     };
     reg["find-tag-by-prefix"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindTagByPrefixAction >(args);
+      return std::unique_ptr< FindTagByPrefixAction >(new FindTagByPrefixAction(args));
     };
     reg["find-collection-by-name"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindCollectionByNameAction >(args);
+      return std::unique_ptr< FindCollectionByNameAction >(new FindCollectionByNameAction(args));
     };
     reg["find-collection-by-prefix"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FindCollectionByPrefixAction >(args);
+      return std::unique_ptr< FindCollectionByPrefixAction >(new FindCollectionByPrefixAction(args));
     };
     reg["union-collections"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< UnionCollectionsAction >(args);
+      return std::unique_ptr< UnionCollectionsAction >(new UnionCollectionsAction(args));
     };
     reg["intersect-collections"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< IntersectCollectionsAction >(args);
+      return std::unique_ptr< IntersectCollectionsAction >(new IntersectCollectionsAction(args));
     };
     reg["filter-by-tag"] = [](const std::vector< std::string > &args) -> std::unique_ptr< Action > {
-      return make_unique< FilterByTagAction >(args);
+      return std::unique_ptr< FilterByTagAction >(new FilterByTagAction(args));
     };
   }
 

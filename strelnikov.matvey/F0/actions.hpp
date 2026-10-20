@@ -262,8 +262,6 @@ namespace strelnikov
   void registerAllActions();
 
   std::string getFilename(const std::string &);
-  
-  static bool startsWith(const std::string &, const std::string &);
 }
 
 #endif
