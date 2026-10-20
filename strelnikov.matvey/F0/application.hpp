@@ -67,7 +67,6 @@ namespace strelnikov
     std::vector< std::string > commandHistory_;
     std::unordered_map< std::string, Handler > serviceCommands_;
   };
-
 }
 
 #endif

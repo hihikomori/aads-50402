@@ -569,5 +569,4 @@ namespace strelnikov
       std::cout << "all files are valid\n";
     }
   }
-
 }

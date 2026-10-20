@@ -871,5 +871,4 @@ namespace strelnikov
       return std::unique_ptr< FilterByTagAction >(new FilterByTagAction(args));
     };
   }
-
 }
