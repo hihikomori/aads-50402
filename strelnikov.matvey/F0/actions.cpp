@@ -250,7 +250,7 @@ namespace strelnikov
         std::cout << "[WRN] FILE \"" << filePath << "\" IS MISSING OR INACCESSIBLE\n";
         std::string action = batchAction_;
         if (action.empty()) {
-          std::cout << "[ACTION] (rm/mv/SKIP): ";
+          std::cout << "[ACTION] decisions made here cannot be reversed (rm/mv/SKIP): ";
           std::string input;
           if (!std::getline(std::cin, input))
             action = "skip";

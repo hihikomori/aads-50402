@@ -23,6 +23,9 @@ namespace strelnikov
     bool canUndo() const;
     bool canRedo() const;
 
+    void clearRedo();
+    void clearUndo();
+
   private:
     std::vector< std::unique_ptr< Action > > undoStack_;
     std::vector< std::unique_ptr< Action > > redoStack_;
@@ -36,16 +39,23 @@ namespace strelnikov
     void run();
 
   private:
+    using Handler = void (*)(Application *, const std::string &);
     void processCommand(const Command &, const std::string &);
 
-    void handleSave(const std::string &);
-    void handleLoad(const std::string &);
-    void handleHistory();
+    static void handleUndo(Application *, const std::string &);
+    static void handleRedo(Application *, const std::string &);
+    static void handleHistory(Application *, const std::string &);
+    static void handleSave(Application *, const std::string &);
+    static void handleLoad(Application *, const std::string &);
+
+    void handleSaveLogic(const std::string &);
+    void handleLoadLogic(const std::string &);
 
     FileSystem fs_;
     Parser parser_;
     UndoManager undoManager_;
     std::vector< std::string > commandHistory_;
+    std::unordered_map< std::string, Handler > serviceCommands_;
   };
 
 }

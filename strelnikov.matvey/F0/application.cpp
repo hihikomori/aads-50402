@@ -45,7 +45,22 @@ namespace strelnikov
     return !redoStack_.empty();
   }
 
-  Application::Application()
+  void UndoManager::clearRedo()
+  {
+    redoStack_.clear();
+  }
+
+  void UndoManager::clearUndo()
+  {
+    undoStack_.clear();
+  }
+
+  Application::Application():
+    serviceCommands_{{"undo", &Application::handleUndo},
+                     {"redo", &Application::handleRedo},
+                     {"history", &Application::handleHistory},
+                     {"save", &Application::handleSave},
+                     {"load", &Application::handleLoad}}
   {
     registerAllActions();
   }
@@ -69,51 +84,66 @@ namespace strelnikov
   void Application::processCommand(const Command &cmd, const std::string &rawInput)
   {
     try {
-      if (cmd.name == "undo") {
-        if (!undoManager_.canUndo()) {
-          std::cout << "[ERR] INVALID COMMAND: nothing to undo\n";
-        } else {
-          undoManager_.undo(fs_);
-        }
-      } else if (cmd.name == "redo") {
-        if (!undoManager_.canRedo()) {
-          std::cout << "[ERR] INVALID COMMAND: nothing to redo\n";
-        } else {
-          undoManager_.redo(fs_);
-        }
-      } else if (cmd.name == "history") {
-        if (commandHistory_.empty()) {
-          std::cout << "[OK] NOTHING TO SHOW\n";
-        } else {
-          for (const auto &h : commandHistory_)
-            std::cout << h << "\n";
-        }
-      } else if (cmd.name == "save") {
-        handleSave(cmd.args[0]);
-        std::cout << "[OK] SAVED \"" << cmd.args[0] << "\" SESSION\n";
-      } else if (cmd.name == "load") {
-        handleLoad(cmd.args[0]);
-        std::cout << "[OK] LOADED \"" << cmd.args[0] << "\" SESSION\n";
+      auto it = serviceCommands_.find(cmd.name);
+
+      if (it != serviceCommands_.end()) {
+        it->second(this, cmd.args.empty() ? "" : cmd.args[0]);
       } else {
+        undoManager_.clearRedo();
+
         auto action = Action::create(cmd.name, cmd.args);
         action->execute(fs_);
         undoManager_.push(std::move(action));
         commandHistory_.push_back(rawInput);
       }
     } catch (const std::exception &e) {
-
       std::cout << "[ERR] INVALID COMMAND: " << e.what() << "\n";
     }
   }
 
-  void Application::handleHistory()
+  void Application::handleUndo(Application *app, const std::string &)
   {
-    for (const auto &cmdStr : commandHistory_) {
-      std::cout << cmdStr << "\n";
+    if (!app->undoManager_.canUndo()) {
+      std::cout << "[ERR] INVALID COMMAND: nothing to undo\n";
+    } else {
+      app->undoManager_.undo(app->fs_);
     }
   }
 
-  void Application::handleSave(const std::string &filename)
+  void Application::handleRedo(Application *app, const std::string &)
+  {
+    if (!app->undoManager_.canRedo()) {
+      std::cout << "[ERR] INVALID COMMAND: nothing to redo\n";
+    } else {
+      app->undoManager_.redo(app->fs_);
+    }
+  }
+
+  void Application::handleHistory(Application *app, const std::string &)
+  {
+    if (app->commandHistory_.empty()) {
+      std::cout << "[OK] NOTHING TO SHOW\n";
+    } else {
+      for (const auto &cmdStr : app->commandHistory_) {
+        std::cout << cmdStr << "\n";
+      }
+    }
+  }
+
+  void Application::handleSave(Application *app, const std::string &arg)
+  {
+    app->handleSaveLogic(arg);
+  }
+
+  void Application::handleLoad(Application *app, const std::string &arg)
+  {
+    app->undoManager_.clearRedo();
+    app->undoManager_.clearUndo();
+
+    app->handleLoadLogic(arg);
+  }
+
+  void Application::handleSaveLogic(const std::string &filename)
   {
     std::ofstream out(filename);
     if (!out)
@@ -154,7 +184,7 @@ namespace strelnikov
     }
   }
 
-  void Application::handleLoad(const std::string &filename)
+  void Application::handleLoadLogic(const std::string &filename)
   {
     std::ifstream in(filename);
     if (!in)
