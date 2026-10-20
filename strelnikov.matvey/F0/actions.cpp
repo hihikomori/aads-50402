@@ -231,8 +231,10 @@ namespace strelnikov
   }
   void SortAction::execute(FileSystem &fs)
   {
-    if (order_ != "by-name" && order_ != "by-id") {
-      std::cout << "[ERR] INVALID COMMAND: order \"" << order_ << "\" is not supported. Use \"by-name\" or \"by-id\"\n";
+    std::cout << "\033[31m[WRN] SORT DISABLED\033[0m\n";
+    return;
+    if (order_ != "by-name") {
+      std::cout << "[ERR] INVALID COMMAND: order \"" << order_ << "\" is not supported. Use 'by-name'\n";
       return;
     }
     auto it = fs.getCollections().find(collectionName_);
