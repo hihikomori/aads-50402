@@ -18,6 +18,7 @@ namespace strelnikov
     virtual ~Action() = default;
     virtual void execute(strelnikov::FileSystem &) = 0;
     virtual void undo(strelnikov::FileSystem &) = 0;
+    virtual std::string getCommandName() const = 0;
 
     using Creator = std::unique_ptr< Action > (*)(const std::vector< std::string > &);
 
@@ -41,6 +42,7 @@ namespace strelnikov
     explicit MakeCollectionAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class RmCollectionAction: public Action
@@ -51,6 +53,7 @@ namespace strelnikov
     explicit RmCollectionAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class ListCollectionsAction: public Action
@@ -59,6 +62,7 @@ namespace strelnikov
     explicit ListCollectionsAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class AddFileAction: public Action
@@ -70,6 +74,7 @@ namespace strelnikov
     explicit AddFileAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class RmFileAction: public Action
@@ -82,6 +87,7 @@ namespace strelnikov
     explicit RmFileAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class ShowAction: public Action
@@ -92,6 +98,7 @@ namespace strelnikov
     explicit ShowAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class SortAction: public Action
@@ -103,6 +110,7 @@ namespace strelnikov
     explicit SortAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class CheckFilesAction: public Action
@@ -114,6 +122,7 @@ namespace strelnikov
     explicit CheckFilesAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class MakeTagAction: public Action
@@ -124,6 +133,7 @@ namespace strelnikov
     explicit MakeTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class RmTagAction: public Action
@@ -134,6 +144,7 @@ namespace strelnikov
     explicit RmTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class GiveTagAction: public Action
@@ -148,6 +159,7 @@ namespace strelnikov
     explicit GiveTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindFileByNameAction: public Action
@@ -159,6 +171,7 @@ namespace strelnikov
     explicit FindFileByNameAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindFileByPrefixAction: public Action
@@ -170,6 +183,7 @@ namespace strelnikov
     explicit FindFileByPrefixAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindFileByTagAction: public Action
@@ -181,6 +195,7 @@ namespace strelnikov
     explicit FindFileByTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindTagByNameAction: public Action
@@ -191,6 +206,7 @@ namespace strelnikov
     explicit FindTagByNameAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindTagByPrefixAction: public Action
@@ -201,6 +217,7 @@ namespace strelnikov
     explicit FindTagByPrefixAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindCollectionByNameAction: public Action
@@ -211,6 +228,7 @@ namespace strelnikov
     explicit FindCollectionByNameAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FindCollectionByPrefixAction: public Action
@@ -221,6 +239,7 @@ namespace strelnikov
     explicit FindCollectionByPrefixAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class UnionCollectionsAction: public Action
@@ -233,6 +252,7 @@ namespace strelnikov
     explicit UnionCollectionsAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class IntersectCollectionsAction: public Action
@@ -245,6 +265,7 @@ namespace strelnikov
     explicit IntersectCollectionsAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   class FilterByTagAction: public Action
@@ -257,6 +278,7 @@ namespace strelnikov
     explicit FilterByTagAction(const std::vector< std::string > &);
     void execute(strelnikov::FileSystem &) override;
     void undo(strelnikov::FileSystem &) override;
+    std::string getCommandName() const override;
   };
 
   void registerAllActions();

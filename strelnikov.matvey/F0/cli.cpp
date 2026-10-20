@@ -31,10 +31,15 @@ namespace strelnikov
         {"intersect-collections", {3, 3}},
         {"filter-by-tag", {3, 3}},
         {"undo", {0, 0}},
+        {"dryUndo", {0, 0}},
+        {"print-undo", {0, 0}},
         {"redo", {0, 0}},
+        {"dryRedo", {0, 0}},
+        {"print-redo", {0, 0}},
         {"history", {0, 0}},
         {"save", {1, 1}},
-        {"load", {1, 1}}};
+        {"load", {1, 1}},
+      };
 
     auto it = argRules.find(cmdName);
     if (it == argRules.end()) {

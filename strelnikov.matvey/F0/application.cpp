@@ -55,9 +55,41 @@ namespace strelnikov
     undoStack_.clear();
   }
 
+  std::string UndoManager::peekUndo() const
+  {
+    return undoStack_.back()->getCommandName();
+  }
+
+  std::string UndoManager::peekRedo() const
+  {
+    return redoStack_.back()->getCommandName();
+  }
+
+  std::vector< std::string > UndoManager::getUndoStack()
+  {
+    std::vector< std::string > result;
+    for (auto it = undoStack_.rbegin(); it != undoStack_.rend(); ++it) {
+      result.push_back((*it)->getCommandName());
+    }
+    return result;
+  }
+
+  std::vector< std::string > UndoManager::getRedoStack()
+  {
+    std::vector< std::string > result;
+    for (auto it = redoStack_.rbegin(); it != redoStack_.rend(); ++it) {
+      result.push_back((*it)->getCommandName());
+    }
+    return result;
+  }
+
   Application::Application():
     serviceCommands_{{"undo", &Application::handleUndo},
+                     {"dryUndo", &Application::handleDryUndo},
+                     {"print-undo", &Application::handlePrintUndoStack},
                      {"redo", &Application::handleRedo},
+                     {"dryRedo", &Application::handleDryRedo},
+                     {"print-redo", &Application::handlePrintRedoStack},
                      {"history", &Application::handleHistory},
                      {"save", &Application::handleSave},
                      {"load", &Application::handleLoad}}
@@ -84,20 +116,20 @@ namespace strelnikov
   void Application::processCommand(const Command &cmd, const std::string &rawInput)
   {
     try {
-      auto it = serviceCommands_.find(cmd.name);
+        auto it = serviceCommands_.find(cmd.name);
 
-      if (it != serviceCommands_.end()) {
-        it->second(this, cmd.args.empty() ? "" : cmd.args[0]);
-      } else {
-        undoManager_.clearRedo();
+        if (it != serviceCommands_.end()) {
+            it->second(this, cmd.args.empty() ? "" : cmd.args[0]);
+        } else {
+            undoManager_.clearRedo();
 
-        auto action = Action::create(cmd.name, cmd.args);
-        action->execute(fs_);
-        undoManager_.push(std::move(action));
-        commandHistory_.push_back(rawInput);
-      }
+            auto action = Action::create(cmd.name, cmd.args);
+            action->execute(fs_);
+            undoManager_.push(std::move(action));
+            commandHistory_.push_back(rawInput);
+        }
     } catch (const std::exception &e) {
-      std::cout << "[ERR] INVALID COMMAND: " << e.what() << "\n";
+        std::cout << "[ERR] INVALID COMMAND: " << e.what() << "\n";
     }
   }
 
@@ -107,6 +139,52 @@ namespace strelnikov
       std::cout << "[ERR] INVALID COMMAND: nothing to undo\n";
     } else {
       app->undoManager_.undo(app->fs_);
+    }
+  }
+
+  void Application::handleDryUndo(Application *app, const std::string &)
+  {
+    if (!app->undoManager_.canUndo()) {
+      std::cout << "[OK] NOTHING TO UNDO\n";
+    } else {
+      std::cout << "[OK] NEXT UNDO: " << app->undoManager_.peekUndo() << "\n";
+    }
+  }
+
+  void Application::handlePrintUndoStack(Application *app, const std::string &)
+  {
+    if (!app->undoManager_.canUndo()) {
+      std::cout << "[OK] NOTHING TO UNDO\n";
+    } else {
+      std::vector< std::string > stack = app->undoManager_.getUndoStack();
+
+      std::cout << "[OK] UNDO QUEUE (" << stack.size() << " actions):\n";
+      for (size_t i = 0; i < stack.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". " << stack[i] << "\n";
+      }
+    }
+  }
+
+  void Application::handleDryRedo(Application *app, const std::string &)
+  {
+    if (!app->undoManager_.canRedo()) {
+      std::cout << "[OK] NOTHING TO REDO\n";
+    } else {
+      std::cout << "[OK] NEXT REDO: " << app->undoManager_.peekRedo() << "\n";
+    }
+  }
+
+  void Application::handlePrintRedoStack(Application *app, const std::string &)
+  {
+    if (!app->undoManager_.canRedo()) {
+      std::cout << "[OK] NOTHING TO REDO\n";
+    } else {
+      std::vector< std::string > stack = app->undoManager_.getRedoStack();
+
+      std::cout << "[OK] REDO QUEUE (" << stack.size() << " actions):\n";
+      for (size_t i = 0; i < stack.size(); ++i) {
+        std::cout << "  " << (i + 1) << ". " << stack[i] << "\n";
+      }
     }
   }
 

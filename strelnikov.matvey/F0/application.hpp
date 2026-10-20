@@ -23,8 +23,14 @@ namespace strelnikov
     bool canUndo() const;
     bool canRedo() const;
 
-    void clearRedo();
     void clearUndo();
+    void clearRedo();
+
+    std::string peekUndo() const;
+    std::string peekRedo() const;
+
+    std::vector< std::string > getUndoStack();
+    std::vector< std::string > getRedoStack();
 
   private:
     std::vector< std::unique_ptr< Action > > undoStack_;
@@ -43,7 +49,11 @@ namespace strelnikov
     void processCommand(const Command &, const std::string &);
 
     static void handleUndo(Application *, const std::string &);
+    static void handleDryUndo(Application *, const std::string &);
+    static void handlePrintUndoStack(Application *, const std::string &);
     static void handleRedo(Application *, const std::string &);
+    static void handleDryRedo(Application *, const std::string &);
+    static void handlePrintRedoStack(Application *, const std::string &);
     static void handleHistory(Application *, const std::string &);
     static void handleSave(Application *, const std::string &);
     static void handleLoad(Application *, const std::string &);

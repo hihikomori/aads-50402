@@ -55,6 +55,10 @@ namespace strelnikov
     fs.removeCollection(name_);
     std::cout << "[OK] COLLECTION \"" << name_ << "\" DELETED\n";
   }
+  std::string MakeCollectionAction::getCommandName() const
+  {
+    return "make-collection " + name_;
+  }
 
   RmCollectionAction::RmCollectionAction(const std::vector< std::string > &args)
   {
@@ -71,6 +75,10 @@ namespace strelnikov
   {
     fs.createCollection(name_);
     std::cout << "[OK] COLLECTION \"" << name_ << "\" CREATED\n";
+  }
+  std::string RmCollectionAction::getCommandName() const
+  {
+    return "rm-collection " + name_;
   }
 
   ListCollectionsAction::ListCollectionsAction(const std::vector< std::string > &)
@@ -95,6 +103,10 @@ namespace strelnikov
   }
   void ListCollectionsAction::undo(FileSystem &)
   {}
+  std::string ListCollectionsAction::getCommandName() const
+  {
+    return "list-collections";
+  }
 
   AddFileAction::AddFileAction(const std::vector< std::string > &args)
   {
@@ -116,6 +128,10 @@ namespace strelnikov
   {
     fs.removeFileFromCollection(collectionName_, filePath_);
     std::cout << "[OK] DELETED \"" << filePath_ << "\" from \"" << collectionName_ << "\" COLLECTION\n";
+  }
+  std::string AddFileAction::getCommandName() const
+  {
+    return "add-file " + collectionName_ + " " + filePath_;
   }
 
   RmFileAction::RmFileAction(const std::vector< std::string > &args)
@@ -166,6 +182,10 @@ namespace strelnikov
       std::cout << "[OK] ADDED \"" << resolvedPath_ << "\" into \"" << collectionName_ << "\" COLLECTION\n";
     }
   }
+  std::string RmFileAction::getCommandName() const
+  {
+    return "rm-file " + collectionName_ + " " + identifier_;
+  }
 
   ShowAction::ShowAction(const std::vector< std::string > &args)
   {
@@ -197,6 +217,10 @@ namespace strelnikov
   }
   void ShowAction::undo(FileSystem &)
   {}
+  std::string ShowAction::getCommandName() const
+  {
+    return "show " + collectionName_;
+  }
 
   SortAction::SortAction(const std::vector< std::string > &args)
   {
@@ -225,6 +249,10 @@ namespace strelnikov
   }
   void SortAction::undo(FileSystem &)
   {}
+  std::string SortAction::getCommandName() const
+  {
+    return "sort " + collectionName_ + " " + order_;
+  }
 
   CheckFilesAction::CheckFilesAction(const std::vector< std::string > &args)
   {
@@ -271,6 +299,10 @@ namespace strelnikov
   }
   void CheckFilesAction::undo(FileSystem &)
   {}
+  std::string CheckFilesAction::getCommandName() const
+  {
+    return "check-files " + collectionName_ + " " + batchAction_;
+  }
 
   MakeTagAction::MakeTagAction(const std::vector< std::string > &args)
   {
@@ -288,6 +320,10 @@ namespace strelnikov
     fs.removeTag(tagName_);
     std::cout << "[OK] TAG \"" << tagName_ << "\" DELETED\n";
   }
+  std::string MakeTagAction::getCommandName() const
+  {
+    return "make-tag " + tagName_;
+  }
 
   RmTagAction::RmTagAction(const std::vector< std::string > &args)
   {
@@ -304,6 +340,10 @@ namespace strelnikov
   {
     fs.createTag(tagName_);
     std::cout << "[OK] TAG \"" << tagName_ << "\" CREATED\n";
+  }
+  std::string RmTagAction::getCommandName() const
+  {
+    return "rm-tag " + tagName_;
   }
 
   static std::string resolveFileInCollection(const std::shared_ptr< Collection > &coll, const std::string &identifier,
@@ -421,6 +461,10 @@ namespace strelnikov
       }
     }
   }
+  std::string GiveTagAction::getCommandName() const
+  {
+    return "give-tag " + tagName_ + " " + collectionName_ + " " + identifier_;
+  }
 
   FindFileByNameAction::FindFileByNameAction(const std::vector< std::string > &args)
   {
@@ -448,6 +492,10 @@ namespace strelnikov
   }
   void FindFileByNameAction::undo(FileSystem &)
   {}
+  std::string FindFileByNameAction::getCommandName() const
+  {
+    return "find-file-by-name " + collectionName_ + " " + fullname_;
+  }
 
   FindFileByPrefixAction::FindFileByPrefixAction(const std::vector< std::string > &args)
   {
@@ -475,6 +523,10 @@ namespace strelnikov
   }
   void FindFileByPrefixAction::undo(FileSystem &)
   {}
+  std::string FindFileByPrefixAction::getCommandName() const
+  {
+    return "find-file-by-prefix " + collectionName_ + " " + prefix_;
+  }
 
   FindFileByTagAction::FindFileByTagAction(const std::vector< std::string > &args)
   {
@@ -505,6 +557,10 @@ namespace strelnikov
   }
   void FindFileByTagAction::undo(FileSystem &)
   {}
+  std::string FindFileByTagAction::getCommandName() const
+  {
+    return "find-file-by-tag " + collectionName_ + " " + tagName_;
+  }
 
   FindTagByNameAction::FindTagByNameAction(const std::vector< std::string > &args)
   {
@@ -533,6 +589,10 @@ namespace strelnikov
   }
   void FindTagByNameAction::undo(FileSystem &)
   {}
+  std::string FindTagByNameAction::getCommandName() const
+  {
+    return "find-tag-by-name " + tagName_;
+  }
 
   FindTagByPrefixAction::FindTagByPrefixAction(const std::vector< std::string > &args)
   {
@@ -567,6 +627,10 @@ namespace strelnikov
   }
   void FindTagByPrefixAction::undo(FileSystem &)
   {}
+  std::string FindTagByPrefixAction::getCommandName() const
+  {
+    return "find-tag-by-prefix " + prefix_;
+  }
 
   FindCollectionByNameAction::FindCollectionByNameAction(const std::vector< std::string > &args)
   {
@@ -590,6 +654,10 @@ namespace strelnikov
   }
   void FindCollectionByNameAction::undo(FileSystem &)
   {}
+  std::string FindCollectionByNameAction::getCommandName() const
+  {
+    return "find-collection-by-name " + collectionName_;
+  }
 
   FindCollectionByPrefixAction::FindCollectionByPrefixAction(const std::vector< std::string > &args)
   {
@@ -618,6 +686,10 @@ namespace strelnikov
   }
   void FindCollectionByPrefixAction::undo(FileSystem &)
   {}
+  std::string FindCollectionByPrefixAction::getCommandName() const
+  {
+    return "find-collection-by-prefix " + prefix_;
+  }
 
   UnionCollectionsAction::UnionCollectionsAction(const std::vector< std::string > &args)
   {
@@ -652,6 +724,10 @@ namespace strelnikov
   {
     fs.removeCollection(newName_);
   }
+  std::string UnionCollectionsAction::getCommandName() const
+  {
+    return "union-collections " + newName_ + " " + col1_ + " " + col2_;
+  }
 
   IntersectCollectionsAction::IntersectCollectionsAction(const std::vector< std::string > &args)
   {
@@ -680,6 +756,10 @@ namespace strelnikov
   void IntersectCollectionsAction::undo(FileSystem &fs)
   {
     fs.removeCollection(newName_);
+  }
+  std::string IntersectCollectionsAction::getCommandName() const
+  {
+    return "intersect-collections " + newName_ + " " + col1_ + " " + col2_;
   }
 
   FilterByTagAction::FilterByTagAction(const std::vector< std::string > &args)
@@ -710,6 +790,10 @@ namespace strelnikov
   void FilterByTagAction::undo(FileSystem &fs)
   {
     fs.removeCollection(newName_);
+  }
+  std::string FilterByTagAction::getCommandName() const
+  {
+    return "filter-by-tag " + newName_ + " " + sourceCol_ + " " + tagName_;
   }
 
   void registerAllActions()
