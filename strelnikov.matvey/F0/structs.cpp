@@ -1,17 +1,119 @@
 #include "structs.hpp"
 #include <algorithm>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 #include <vector>
 
+#ifdef _WIN32
+#include <direct.h>
+#define GETCWD _getcwd
+#define PATH_SEP '\\'
+#else
+#include <unistd.h>
+#define GETCWD getcwd
+#define PATH_SEP '/'
+#endif
+
 namespace strelnikov
 {
-  std::string normalizePath(const std::string &p)
+  static std::string getCurrentDir()
   {
-    return std::filesystem::absolute(p).lexically_normal().string();
+    char buffer[4096];
+    if (GETCWD(buffer, sizeof(buffer))) {
+      return std::string(buffer);
+    }
+    return "";
   }
+
+  static std::string normalizePath(const std::string &path)
+  {
+    std::string absPath = path;
+    if (absPath.empty()) {
+      absPath = getCurrentDir();
+    } else {
+      bool isAbs = false;
+#ifdef _WIN32
+      if (absPath.size() >= 2 && std::isalpha((unsigned char)absPath[0]) && absPath[1] == ':')
+        isAbs = true;
+      if (absPath[0] == '\\' || absPath[0] == '/')
+        isAbs = true;
+#else
+      if (absPath[0] == '/')
+        isAbs = true;
+#endif
+      if (!isAbs) {
+        std::string cwd = getCurrentDir();
+        if (!cwd.empty()) {
+          absPath = cwd + PATH_SEP + absPath;
+        }
+      }
+    }
+
+    std::vector< std::string > parts;
+    std::string current;
+    for (size_t i = 0; i < absPath.size(); ++i) {
+      char c = absPath[i];
+      if (c == '/' || c == '\\') {
+        if (!current.empty()) {
+          if (current == ".") {
+
+          } else if (current == "..") {
+            if (!parts.empty() && parts.back() != "..") {
+              parts.pop_back();
+            } else {
+              parts.push_back(current);
+            }
+          } else {
+            parts.push_back(current);
+          }
+          current.clear();
+        }
+      } else {
+        current += c;
+      }
+    }
+    if (!current.empty()) {
+      if (current == ".") {
+
+      } else if (current == "..") {
+        if (!parts.empty() && parts.back() != "..") {
+          parts.pop_back();
+        } else {
+          parts.push_back(current);
+        }
+      } else {
+        parts.push_back(current);
+      }
+    }
+
+    std::string result;
+#ifdef _WIN32
+    if (absPath.size() >= 2 && std::isalpha((unsigned char)absPath[0]) && absPath[1] == ':') {
+      result += absPath[0];
+      result += ':';
+    } else if (absPath.size() >= 2 && (absPath[0] == '\\' || absPath[0] == '/')
+               && (absPath[1] == '\\' || absPath[1] == '/')) {
+      result += "\\\\";
+    } else {
+      result += PATH_SEP;
+    }
+#else
+    result += PATH_SEP;
+#endif
+
+    for (size_t i = 0; i < parts.size(); ++i) {
+      result += parts[i];
+      if (i + 1 < parts.size())
+        result += PATH_SEP;
+    }
+
+    if (result.size() > 1 && result.back() == PATH_SEP) {
+      result.pop_back();
+    }
+    return result;
+  }
+
 
   Tag::Tag(const std::string &name):
     name_(name)
